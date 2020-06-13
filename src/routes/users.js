@@ -9,5 +9,5 @@ module.exports.users = [
 ];
 
 router.get('/users', (req, res) => {
-  res.json(users);
+  res.json(module.exports.users);
 });
