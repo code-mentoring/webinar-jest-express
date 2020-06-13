@@ -1,6 +1,6 @@
 const supertest = require('supertest');
-const {start} = require('../src/index');
-const {users} = require('../src/routes/users');
+const { start } = require('../src/index');
+const { users } = require('../src/routes/users');
 
 let app;
 let request;
@@ -19,7 +19,7 @@ beforeAll(async () => {
 describe('GET /users', () => {
   let json;
 
-  beforeEach(async() => {
+  beforeEach(async () => {
     const res = await request.get('/users')
     json = JSON.parse(res.res.text);
   })
@@ -39,6 +39,27 @@ describe('GET /users', () => {
 });
 
 
-describe.skip('POST /users', () => {
+describe('POST /users', () => {
+  it('should successfully create a user', () => {
+    const user = { name: 'Mary Jane', age: 22 };
+    request
+      .post('/users')
+      .send({ name: 'Mary Jane', age: 22 })
+      .expect(user);
+  });
 
+
+  ['name', 'age', 'profession'].forEach((key) => {
+    it(`should fail when not providing a ${key}`, async () => {
+      const user = { name: 'Mary Jane', age: 22 , profession: 'CEO'};
+      delete user[key]; // Remove required field
+      await request
+        .post('/users')
+        .send(user)
+        .expect(400)
+        .expect({
+          message: `No ${key} provided`
+        })
+    });
+  });
 });
